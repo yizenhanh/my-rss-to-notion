@@ -2,7 +2,7 @@ name: RSS to Notion
 on:
   schedule:
     - cron: '0 * * * *' # 每小时运行一次
-  workflow_dispatch: # 允许你手动点击运行
+  workflow_dispatch: # 允许手动点击运行
 
 jobs:
   build:
@@ -10,9 +10,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Run RSS to Notion
-        uses: GiyoH0/rss-to-notion@v1 # 这是一个现成的开源工具
+
+      - name: RSS to Notion
+        uses: d-p-y/rss-to-notion@v1.1.0 # 换成这个更稳定的版本
         with:
           notion_token: ${{ secrets.NOTION_TOKEN }}
           notion_database_id: ${{ secrets.NOTION_DATABASE_ID }}
-          rss_url: ${{ secrets.NOTION_RSS_URL }}
+          rss_url: ${{ secrets.NOTION_RSS_URL }} # 注意这里要和你在 Secrets 里填的名字一致
