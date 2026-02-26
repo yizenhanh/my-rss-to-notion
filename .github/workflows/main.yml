@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4 # 使用最新的 checkout 版本
 
       - name: RSS to Notion
-        uses: moeyua/rss-to-notion@v2.0.0 # 这是一个目前活跃且公开的仓库
+        uses: p-nerd/rss-to-notion@master
         with:
           notion_token: ${{ secrets.NOTION_TOKEN }}
           notion_database_id: ${{ secrets.NOTION_DATABASE_ID }}
