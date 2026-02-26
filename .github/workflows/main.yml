@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # 使用最新的 checkout 版本
 
       - name: RSS to Notion
-        uses: d-p-y/rss-to-notion@v1.1.0 # 换成这个更稳定的版本
+        uses: moeyua/rss-to-notion@v2.0.0 # 这是一个目前活跃且公开的仓库
         with:
           notion_token: ${{ secrets.NOTION_TOKEN }}
           notion_database_id: ${{ secrets.NOTION_DATABASE_ID }}
-          rss_url: ${{ secrets.NOTION_RSS_URL }} # 注意这里要和你在 Secrets 里填的名字一致
+          rss_url: ${{ secrets.RSS_URL }}
