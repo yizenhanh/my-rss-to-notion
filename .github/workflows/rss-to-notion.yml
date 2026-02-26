@@ -1,8 +1,11 @@
 name: RSS to Notion
 on:
   schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
+    # 这里的 cron 格式为：分钟 小时 天 月 星期
+    # 注意：GitHub Actions 的时间是 UTC 时间（格林威治标准时间）
+    # 北京时间 23:00 等于 UTC 时间 15:00
+    - cron: '0 15 * * 1'
+  workflow_dispatch: # 保留这个，以便你随时可以手动点击运行
 
 jobs:
   build:
