@@ -19,24 +19,41 @@ def get_real_high_res(url):
     return high_res
 
 def download_image(url):
-    """下载图片并返回 GitHub Raw 链接"""
-    if not url or "bp.blogspot.com" not in url: return url
+    """下载图片并强制返回 GitHub 链接，增加详细日志"""
+    if not url: return url
     try:
-        hd_url = get_real_high_res(url)
+        # 转换高清链接
+        hd_url = re.sub(r'/(s\d+[-h]*|w\d+)/', '/s0/', url)
+        
+        # 确保 images 目录存在
+        if not os.path.exists('images'):
+            os.makedirs('images')
+
+        # 生成文件名
         path = urlparse(hd_url).path
-        ext = os.path.splitext(path)[1] or ".jpg"
-        # 生成唯一文件名防止覆盖
-        filename = re.sub(r'[^a-zA-Z0-9]', '_', path.split('/')[-1]) + ext
+        filename = path.split('/')[-1]
+        if not filename or '.' not in filename:
+            filename = re.sub(r'[^a-zA-Z0-9]', '_', hd_url[-15:]) + ".jpg"
+        
         local_path = f"images/{filename}"
         
-        r = requests.get(hd_url, timeout=15)
+        # 下载
+        r = requests.get(hd_url, timeout=20)
         if r.status_code == 200:
             with open(local_path, 'wb') as f:
                 f.write(r.content)
-            return f"https://raw.githubusercontent.com/{REPO}/main/images/{filename}"
+            
+            # 【关键修改】确保这里生成的地址是你自己的 GitHub 地址
+            # 格式：https://raw.githubusercontent.com/用户名/仓库名/main/images/文件名
+            github_url = f"https://raw.githubusercontent.com/{REPO}/main/{local_path}"
+            print(f"DEBUG: 成功下载图片 {filename}, 新地址: {github_url}")
+            return github_url
+        else:
+            print(f"DEBUG: 下载失败，状态码: {r.status_code}")
     except Exception as e:
-        print(f"下载大图失败: {e}")
-    return url
+        print(f"DEBUG: 下载异常: {e}")
+    
+    return url # 实在不行才返回原图
 
 class NotionContentParser(HTMLParser):
     def __init__(self):
