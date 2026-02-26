@@ -1,12 +1,15 @@
 name: RSS to Notion
 on:
   schedule:
-    - cron: '0 * * * *' # 每小时运行一次
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # 关键：赋予写入权限
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,5 +27,15 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
           RSS_URL: ${{ secrets.RSS_URL }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
+          mkdir -p images  # 创建存放图片的文件夹
           python sync.py
+
+      - name: Commit and Push images
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add images/*
+          git commit -m "Backup images from RSS" || exit 0 # 如果没有新图片就跳过
+          git push
